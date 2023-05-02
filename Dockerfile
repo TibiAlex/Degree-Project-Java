@@ -13,6 +13,9 @@ COPY .mvn ./.mvn
 # Copiem intreg folderul sursa in imaginea de dokcer
 COPY src ./src
 
+# Expunem portul 8080 pentru a putea accesa API-ul
+EXPOSE 8080
+
 # Schimbam permisiunilepe mvnx pentru a il putea executa
 # De asemenea folosim comanda dos2unix intrucat original proiectul a fost creat pe windows
 # Instalam maven si apoi cream fisierul .jar
@@ -22,11 +25,8 @@ COPY src ./src
 RUN chmod +x mvnw \
     && apt-get update && apt-get install -y maven \
     && apt install dos2unix \
-    && dos2unix mvnwc \
-RUN ./mvnw clean package
-
-# Expunem portul 8080 pentru a putea accesa API-ul
-EXPOSE 8080
+    && dos2unix mvnw \
+    && ./mvnw clean package
 
 # Comanda ce se va rula la pornirea container-ului
 ENTRYPOINT ["java","-jar","/app/target/back-0.0.1-SNAPSHOT.jar"]
