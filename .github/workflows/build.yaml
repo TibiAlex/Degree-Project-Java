@@ -6,9 +6,12 @@ on:
     branches:
       - main
 
+env:
+  COMMIT_ID: ${{ github.sha }}
+
 jobs:
-  build:
-    name: Build
+  sonarCheck:
+    name: SonarQube Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,3 +39,21 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=TibiAlex_Degree-Project-Java_AYfiN4EAqOakdOebiAL0
+
+  dockerBuildAndPush:
+    name: Build docker image and push it to docker hub
+    needs: sonarCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: docker login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: build image
+        run: docker build . --file Degree-Project-Java/Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/java:${COMMIT_ID:0:7} --tag ${{ secrets.DOCKERHUB_USERNAME }}/java:latest
+
+      - name: push to dockerhub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/java --all-tags
