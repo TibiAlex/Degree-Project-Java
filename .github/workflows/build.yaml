@@ -53,7 +53,7 @@ jobs:
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
       - name: build image
-        run: docker build . --file Degree-Project-Java/Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/java:${COMMIT_ID:0:7} --tag ${{ secrets.DOCKERHUB_USERNAME }}/java:latest
+        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/java:${COMMIT_ID:0:7} --tag ${{ secrets.DOCKERHUB_USERNAME }}/java:latest
 
       - name: push to dockerhub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/java --all-tags
