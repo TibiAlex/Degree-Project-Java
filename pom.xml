@@ -114,6 +114,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
+<!-- mvn sonar:sonar -Dsonar.host.url=http://20.123.28.251:9000 -Dsonar.login=squ_1efeb8ebca9a6f810ac19fbbafe9257c56ca6e01	-->
 		</plugins>
 	</build>
 
