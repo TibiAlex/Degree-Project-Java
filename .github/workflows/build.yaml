@@ -57,3 +57,15 @@ jobs:
 
       - name: push to dockerhub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/java --all-tags
+
+#  deployToAKS:
+#    name: Deploy image to aks
+#    needs: dockerBuildAndPush
+#    runs-on: ubuntu-latest
+#    create namespace
+#    kubectl create namespace $(COMMIT_IDD)
+#    install helm
+#    helm install --namespace=$(COMMIT_IDD) $(degree) values-helm --set image.name=$(IMAGE_TAG_AKSS)
+#    wait until liveness probe
+#    start karate tests
+#    delete everything
