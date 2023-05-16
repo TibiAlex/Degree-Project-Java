@@ -15,6 +15,8 @@ spec:
       labels:
         app: degree-java
     spec:
+      imagePullSecrets:
+        - name: aks-secret
       containers:
         - name: degree-java
           image: "{{ .Values.image.name }}"
@@ -22,18 +24,18 @@ spec:
             - containerPort: 8080
           livenessProbe:
             httpGet:
-              path: /liveness
+              path: /api/liveness
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1
             failureThreshold: 2
           readinessProbe:
             httpGet:
-              path: /liveness
+              path: /api/liveness
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1

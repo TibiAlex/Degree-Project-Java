@@ -25,9 +25,10 @@ public class Controller {
     private final AppUserService appUserService;
     private final LoginService loginService;
     private final StorageService storageService;
-    
-    @GetMapping(path = "/liveness")
-    public void liveness() {
+
+    @GetMapping("/liveness")
+    public ResponseEntity<String> liveness() {
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/register")
