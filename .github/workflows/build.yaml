@@ -58,12 +58,26 @@ jobs:
       - name: push to dockerhub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/java --all-tags
 
-#  deployToAKS:
-#    name: Deploy image to aks
-#    needs: dockerBuildAndPush
-#    runs-on: ubuntu-latest
-#    steps:
-
+  deployToAKS:
+    name: Deploy image to aks
+    needs: dockerBuildAndPush
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+      - name: Azure Login
+        uses: Azure/login@v1.4.6
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: '${{ secrets.resource_group }}' #degree
+          cluster-name: '${{ secrets.cluster_name }}' #degree_aks
+          
+          
 #    create namespace
 #    kubectl create namespace $(COMMIT_IDD)
 #    install helm
