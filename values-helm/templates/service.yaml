@@ -1,0 +1,14 @@
+# Source: generic/templates/service.yaml
+# Enables network access for the pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: degree-java
+  namespace: "{{ .Values.namespace.name }}"
+spec:
+  selector:
+    app: degree-java
+  ports:
+    - protocol: TCP
+      port: 8080
+  type: LoadBalancer

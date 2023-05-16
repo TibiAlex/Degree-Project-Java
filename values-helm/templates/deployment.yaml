@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: degree-java
+  labels:
+    app: degree-java
+  namespace: "{{ .Values.namespace.name }}"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: degree-java
+  template:
+    metadata:
+      labels:
+        app: degree-java
+    spec:
+      containers:
+        - name: degree-java
+          image: "{{ .Values.image.name }}"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 2
+          readinessProbe:
+            httpGet:
+              path: /liveness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 2
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi

@@ -25,6 +25,10 @@ public class Controller {
     private final AppUserService appUserService;
     private final LoginService loginService;
     private final StorageService storageService;
+    
+    @GetMapping(path = "/liveness")
+    public void liveness() {
+    }
 
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestBody RegisterRequest registerRequest) {
