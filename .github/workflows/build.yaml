@@ -119,7 +119,7 @@ jobs:
            client_payload: |
              {
                "env": "java",
-               "baseUrl": "${{ needs.job1.outputs.service_ip }}"
+               "baseUrl": "${{ needs.deployToAKS.outputs.service_ip }}"
              }
            # Fail current job if downstream job fails. default: true
            propagate_failure: true
