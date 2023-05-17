@@ -8,7 +8,6 @@ on:
       - main
 
 env:
-  # unique id used for versioning the docker image and creating a unique namespace name
   COMMIT_ID: ${{ github.sha }}
 
 jobs:
@@ -126,6 +125,5 @@ jobs:
            trigger_workflow: true
            # Wait for workflow to finish. default: true
            wait_workflow: true
-      
 
 #    delete everything
