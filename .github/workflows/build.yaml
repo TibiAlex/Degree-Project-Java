@@ -90,7 +90,7 @@ jobs:
           kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
           service_ip=$(kubectl get service degree-java -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           service_ip="http://${service_ip}:8080"
-          echo "::set-output name=service_ip::$service_ip"
+          echo ${service_ip} > value.txt
 
   karateTests:
     name: Start karate tests
@@ -118,7 +118,7 @@ jobs:
            client_payload: |
              {
                "env": "java",
-               "baseUrl": "${{ steps.get_service_ip.outputs.service_ip }}"
+               "baseUrl": "$(cat value.txt)"
              }
            # Fail current job if downstream job fails. default: true
            propagate_failure: true
