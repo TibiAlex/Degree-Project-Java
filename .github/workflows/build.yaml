@@ -110,7 +110,7 @@ jobs:
            # The reference of the workflow run. The reference can be a branch, tag, or a commit SHA. Default: main
            ref: main
            # The number of seconds delay between checking for result of run.
-           wait_interval: 30
+           wait_interval: 10
            # The reference point. For example, you could use main.yml.
            workflow_file_name: build.yaml
            # Payload to pass to the workflow, must be a JSON string
