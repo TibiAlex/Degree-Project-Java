@@ -10,91 +10,91 @@ env:
   COMMIT_ID: ${{ github.sha }}
 
 jobs:
-#  sonarCheck:
-#    name: SonarQube Check
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#        with:
-#          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-#      - name: Set up JDK 17
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 17
-#      - name: Cache SonarQube packages
-#        uses: actions/cache@v1
-#        with:
-#          path: ~/.sonar/cache
-#          key: ${{ runner.os }}-sonar
-#          restore-keys: ${{ runner.os }}-sonar
-#      - name: Cache Maven packages
-#        uses: actions/cache@v1
-#        with:
-#          path: ~/.m2
-#          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-#          restore-keys: ${{ runner.os }}-m2
-#      - name: Build and analyze
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=TibiAlex_Degree-Project-Java_AYfiN4EAqOakdOebiAL0
-#
-#  dockerBuildAndPush:
-#    name: Build docker image and push it to docker hub
-#    needs: sonarCheck
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: docker login
-#        env:
-#          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-#          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-#        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#
-#      - name: build image
-#        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:${COMMIT_ID:0:7} --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
-#
-#      - name: push to dockerhub
-#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }} --all-tags
-#
-#  deployToAKS:
-#    name: Deploy image to aks
-#    needs: dockerBuildAndPush
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout source code
-#        uses: actions/checkout@v3
-#      - name: Azure Login
-#        uses: Azure/login@v1.4.6
-#        with:
-#          creds: ${{ secrets.AZURE_CREDENTIALS }}
-#      - name: Setup kubectl
-#        id: install-kubectl
-#        uses: azure/setup-kubectl@v3
-#      - name: Install Helm
-#        run: |
-#          curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
-#          sudo apt-get install apt-transport-https --yes
-#          echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-#          sudo apt-get update
-#          sudo apt-get install helm --yes
-#      - name: Deploy to AKS using Helm
-#        run: |
-#          az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
-#          kubectl create namespace ${{ secrets.DEV_NAMESPACE }}
-#          kubectl create secret docker-registry aks-secret --namespace ${{ secrets.DEV_NAMESPACE }} --docker-server=${{ secrets.DOCKER_SERVER }} --docker-username=${{ secrets.DOCKERHUB_USERNAME }} --docker-password=${{ secrets.DOCKERHUB_PASSWORD }} --docker-email=${{ secrets.DOCKERHUB_EMAIL }}
-#          helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
-#          chmod +x sleep_until_condition.sh
-#          ./sleep_until_condition.sh ${{ secrets.DEV_NAMESPACE }}
-#          kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
-#          service_ip=$(kubectl get service degree-java -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-#          service_ip="http://${service_ip}:8080"
-#          echo "::set-output name=service_ip::$service_ip"
+  sonarCheck:
+    name: SonarQube Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=TibiAlex_Degree-Project-Java_AYfiN4EAqOakdOebiAL0
+
+  dockerBuildAndPush:
+    name: Build docker image and push it to docker hub
+    needs: sonarCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: docker login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: build image
+        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:${COMMIT_ID:0:7} --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
+
+      - name: push to dockerhub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }} --all-tags
+
+  deployToAKS:
+    name: Deploy image to aks
+    needs: dockerBuildAndPush
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Azure Login
+        uses: Azure/login@v1.4.6
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Install Helm
+        run: |
+          curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+          sudo apt-get install apt-transport-https --yes
+          echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+          sudo apt-get update
+          sudo apt-get install helm --yes
+      - name: Deploy to AKS using Helm
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
+          kubectl create namespace ${{ secrets.DEV_NAMESPACE }}
+          kubectl create secret docker-registry aks-secret --namespace ${{ secrets.DEV_NAMESPACE }} --docker-server=${{ secrets.DOCKER_SERVER }} --docker-username=${{ secrets.DOCKERHUB_USERNAME }} --docker-password=${{ secrets.DOCKERHUB_PASSWORD }} --docker-email=${{ secrets.DOCKERHUB_EMAIL }}
+          helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
+          chmod +x sleep_until_condition.sh
+          ./sleep_until_condition.sh ${{ secrets.DEV_NAMESPACE }}
+          kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
+          service_ip=$(kubectl get service degree-java -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          service_ip="http://${service_ip}:8080"
+          echo "::set-output name=service_ip::$service_ip"
 
   karateTests:
     name: Start karate tests
-#    needs: deployToAKS
+    needs: deployToAKS
     runs-on: ubuntu-latest
     steps:
        - name: Trigger Workflow and Wait
