@@ -29,7 +29,7 @@ public class JwtUtil {
         return  buffer.toString();
     }
 
-    private final String SECRET_KEY = generateString();
+    private final String SECRET_KEY = "my_secret";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

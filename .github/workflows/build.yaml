@@ -118,7 +118,7 @@ jobs:
            client_payload: |
              {
                "env": "java",
-               "baseUrl": "http://20.67.215.25:8080"
+               "baseUrl": "${{ steps.get_service_ip.outputs.service_ip }}"
              }
            # Fail current job if downstream job fails. default: true
            propagate_failure: true
