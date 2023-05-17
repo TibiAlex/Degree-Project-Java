@@ -69,7 +69,6 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v1.4.6
         with:
-          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Setup kubectl
         id: install-kubectl
@@ -84,7 +83,7 @@ jobs:
       - name: Deploy to AKS using Helm
         run: |
           az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
-          kubectlcreate namespace ${{ secrets.DEV_NAMESPACE }}
+          kubectl create namespace ${{ secrets.DEV_NAMESPACE }}
           kubectl create secret docker-registry aks-secret --namespace ${{ secrets.DEV_NAMESPACE }} --docker-server=${{ secrets.DOCKER_SERVER }} --docker-username=${{ secrets.DOCKERHUB_USERNAME }} --docker-password=${{ secrets.DOCKERHUB_PASSWORD }} --docker-email=${{ secrets.DOCKERHUB_EMAIL }}
           helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
               
