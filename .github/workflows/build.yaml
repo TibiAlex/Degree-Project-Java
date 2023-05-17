@@ -89,12 +89,12 @@ jobs:
           ./sleep_until_condition.sh ${{ secrets.DEV_NAMESPACE }}
           service_ip=$(kubectl get service <service-name> -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "::set-output name=service_ip::$service_ip"
-          
-   karateTests:
-     name: Start karate tests
-     needs: deployToAKS
-     runs-on: ubuntu-latest
-     steps:
+
+  karateTests:
+    name: Start karate tests
+    needs: deployToAKS
+    runs-on: ubuntu-latest
+    steps:
        - name: Trigger Workflow and Wait
          uses: convictional/trigger-workflow-and-wait@v1.6.5
          with:
