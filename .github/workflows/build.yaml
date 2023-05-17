@@ -62,6 +62,8 @@ jobs:
     name: Deploy image to aks
     needs: dockerBuildAndPush
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.set_variable.outputs.service_ip }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -119,7 +121,7 @@ jobs:
            client_payload: |
              {
                "env": "java",
-               "baseUrl": "${{ needs.deployToAKS.outputs.service_ip }}"
+               "baseUrl": "${{ needs.deployToAKS.outputs.output1 }}"
              }
            # Fail current job if downstream job fails. default: true
            propagate_failure: true
