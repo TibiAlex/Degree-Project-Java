@@ -80,6 +80,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install helm --yes
       - name: Deploy to AKS using Helm
+        id: set_variable
         run: |
           az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
           kubectl create namespace ${{ secrets.DEV_NAMESPACE }}
@@ -90,7 +91,7 @@ jobs:
           kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
           service_ip=$(kubectl get service degree-java -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           service_ip="http://${service_ip}:8080"
-          echo ${service_ip} > value.txt
+          echo "::set-output name=service_ip::${service_ip}"
 
   karateTests:
     name: Start karate tests
@@ -118,7 +119,7 @@ jobs:
            client_payload: |
              {
                "env": "java",
-               "baseUrl": "$(cat value.txt)"
+               "baseUrl": "${{ needs.job1.outputs.service_ip }}"
              }
            # Fail current job if downstream job fails. default: true
            propagate_failure: true
