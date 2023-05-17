@@ -1,10 +1,7 @@
 name: EducatieAntreprenoriala
 
 on:
-  # for debugging when creating the pipeline
   workflow_dispatch:
-  # so that it triggers automatically on pull request
-  # the pipeline restarts automatically on another commit on the pull request branch
   pull_request:
     types: [opened, reopened]
     branches:
