@@ -39,6 +39,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=TibiAlex_Degree-Project-Java_AYfiN4EAqOakdOebiAL0
+      - name: Fail job if SonarQube check fails
+        if: ${{ failure() }}
+        run: |
+           echo "SonarQube check failed!"
+           exit 1
 
   dockerBuildAndPush:
     name: Build docker image and push it to docker hub
