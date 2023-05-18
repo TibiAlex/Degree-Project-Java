@@ -87,7 +87,7 @@ jobs:
           az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
           kubectl create namespace ${{ secrets.DEV_NAMESPACE }}
           kubectl create secret docker-registry aks-secret --namespace ${{ secrets.DEV_NAMESPACE }} --docker-server=${{ secrets.DOCKER_SERVER }} --docker-username=${{ secrets.DOCKERHUB_USERNAME }} --docker-password=${{ secrets.DOCKERHUB_PASSWORD }} --docker-email=${{ secrets.DOCKERHUB_EMAIL }}
-          helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
+          helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest --set version.name=${COMMIT_ID:0:7}
           chmod +x sleep_until_condition.sh
           ./sleep_until_condition.sh ${{ secrets.DEV_NAMESPACE }}
           kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
@@ -122,6 +122,7 @@ jobs:
              {
                "env": "java",
                "baseUrl": "${{ needs.deployToAKS.outputs.output1 }}"
+               "path": "customJava/JavaRunner"
              }
            # Fail current job if downstream job fails. default: true
            propagate_failure: true
@@ -130,4 +131,29 @@ jobs:
            # Wait for workflow to finish. default: true
            wait_workflow: true
 
-#    delete everything
+  deleteDeployment:
+    name: Delete deployment from aks
+    needs: karateTests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: Azure/login@v1.4.6
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Install Helm
+        run: |
+          curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+          sudo apt-get install apt-transport-https --yes
+          echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+          sudo apt-get update
+          sudo apt-get install helm --yes
+      - name: Uninstall helm charts
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
+          helm uninstall my-release degree
+          kubectl delete namespace ${{ secrets.DEV_NAMESPACE }}
+
+  # deploy to production namespace with canary.

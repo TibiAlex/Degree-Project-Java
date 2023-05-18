@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         app: degree-java
+        version: "{{ .Values.version.name }}"
     spec:
       imagePullSecrets:
         - name: aks-secret
