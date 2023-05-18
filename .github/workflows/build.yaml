@@ -121,7 +121,7 @@ jobs:
            client_payload: |
              {
                "env": "java",
-               "baseUrl": "${{ needs.deployToAKS.outputs.output1 }}"
+               "baseUrl": "${{ needs.deployToAKS.outputs.output1 }}",
                "path": "customJava/JavaRunner"
              }
            # Fail current job if downstream job fails. default: true
