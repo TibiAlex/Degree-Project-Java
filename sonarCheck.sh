@@ -6,7 +6,7 @@ analysis_status=$(curl -u "$sonarToken:" "http://20.123.28.251:9000/api/qualityg
 
 value=$(echo "$analysis_status" | jq -r '.projectStatus.status')
 
-if [[ $value == "ERROR" ]]; then
+if [ "$value" == "ERROR" ]; then
       echo "SonarQube check failed!"
       exit 1
 fi
