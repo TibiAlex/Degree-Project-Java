@@ -154,7 +154,7 @@ jobs:
         run: |
           az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
           kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
-          helm uninstall my-release degree
+          helm uninstall degree
           kubectl delete namespace ${{ secrets.DEV_NAMESPACE }}
 
   # deploy to production namespace with canary.
