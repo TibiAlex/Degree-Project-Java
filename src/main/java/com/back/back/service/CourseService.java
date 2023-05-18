@@ -41,18 +41,21 @@ public class CourseService implements StorageService {
     private final SubscriptionsRepo subscriptionsRepo;
     private final AppUserRepo appUserRepo;
     private final RatingsRepo ratingsRepo;
+    private final TodoServiceImpl todoService;
 
     @Autowired
     public CourseService(CourseRepo courseRepo,
                          StorageProperties properties,
                          SubscriptionsRepo subscriptionsRepo,
                          AppUserRepo appUserRepo,
-                         RatingsRepo ratingsRepo) {
+                         RatingsRepo ratingsRepo,
+                         TodoServiceImpl todoService) {
         this.courseRepo = courseRepo;
         this.rootLocation = Paths.get(properties.getLocation());
         this.subscriptionsRepo = subscriptionsRepo;
         this.appUserRepo = appUserRepo;
         this.ratingsRepo = ratingsRepo;
+        this.todoService = todoService;
     }
 
     @Override
@@ -101,8 +104,7 @@ public class CourseService implements StorageService {
                 return "Cannot store empty input.";
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile,
-                        StandardCopyOption.REPLACE_EXISTING);
+                todoService.saveTodo(name, file);
                 courseRepo.save(new Course(email, title, name, description, type,  LocalDateTime.now()));
             }
         }
@@ -235,11 +237,9 @@ public class CourseService implements StorageService {
         if(course.isEmpty())
             return "nu exista";
         else {
-            File fileToDelete = new File(rootLocation + "/" + backName);
-            boolean success = fileToDelete.delete();
+            todoService.deleteTodo(backName);
             courseRepo.deleteCourseByBackName(backName);
-            if(success) return "success";
-            return "fail";
+            return "success";
         }
     }
 
