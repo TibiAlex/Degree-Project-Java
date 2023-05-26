@@ -162,3 +162,4 @@ jobs:
           kubectl delete namespace ${{ secrets.DEV_NAMESPACE }}
 
   # deploy to production namespace with canary.
+  # de comentat fail-ul de sonar pt testul final
