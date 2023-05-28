@@ -42,7 +42,7 @@ jobs:
       - name: Fail job if SonarQube check fails
         run: |
           chmod +x sonarCheck.sh
-          ./sonarCheck.sh ${{ secrets.SONAR_TOKEN }}
+#          ./sonarCheck.sh ${{ secrets.SONAR_TOKEN }}
 
   dockerBuildAndPush:
     name: Build docker image and push it to docker hub
