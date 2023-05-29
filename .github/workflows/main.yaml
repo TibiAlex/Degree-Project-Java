@@ -11,7 +11,6 @@ env:
 jobs:
   deployToAKS:
     name: Deploy image to aks
-    needs: dockerBuildAndPush
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
