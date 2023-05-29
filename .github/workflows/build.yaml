@@ -1,8 +1,8 @@
-name: EducatieAntreprenoriala
+name: PreviewEnvironmentTesting
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
     branches:
       - main
 
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
@@ -35,14 +35,14 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=TibiAlex_Degree-Project-Java_AYfiN4EAqOakdOebiAL0
       - name: Fail job if SonarQube check fails
         run: |
           chmod +x sonarCheck.sh
-#          ./sonarCheck.sh ${{ secrets.SONAR_TOKEN }}
+          ./sonarCheck.sh ${{ secrets.SONAR_TOKEN }}
 
   dockerBuildAndPush:
     name: Build docker image and push it to docker hub
@@ -160,6 +160,3 @@ jobs:
           kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
           helm uninstall degree
           kubectl delete namespace ${{ secrets.DEV_NAMESPACE }}
-
-  # deploy to production namespace with canary.
-  # de comentat fail-ul de sonar pt testul final
