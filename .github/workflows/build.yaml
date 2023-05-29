@@ -162,7 +162,7 @@ jobs:
 #          kubectl delete namespace ${{ secrets.DEV_NAMESPACE }}
 
   review:
-    needs: build
+#    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Request reviews
