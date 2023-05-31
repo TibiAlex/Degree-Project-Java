@@ -91,7 +91,7 @@ jobs:
           az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }}
           kubectl create namespace ${{ secrets.DEV_NAMESPACE }}
           kubectl create secret docker-registry aks-secret --namespace ${{ secrets.DEV_NAMESPACE }} --docker-server=${{ secrets.DOCKER_SERVER }} --docker-username=${{ secrets.DOCKERHUB_USERNAME }} --docker-password=${{ secrets.DOCKERHUB_PASSWORD }} --docker-email=${{ secrets.DOCKERHUB_EMAIL }}
-          helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest --set version.name=${COMMIT_ID:0:7}
+          helm install --namespace=${{ secrets.DEV_NAMESPACE }} degree values-helm --set namespace.name=${{ secrets.DEV_NAMESPACE }} --set image.name=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest --set version.name=${COMMIT_ID:0:7} --set deployname.name=degree-java
           chmod +x sleep_until_condition.sh
           ./sleep_until_condition.sh ${{ secrets.DEV_NAMESPACE }}
           kubectl config set-context --current --namespace=${{ secrets.DEV_NAMESPACE }}
