@@ -66,7 +66,6 @@ public class Controller {
     @PostMapping(path = "/uploadCourse")
     public String uploadFile(@ModelAttribute AddCourseRequest addCourseRequest) {
         int a;
-        int b;
         return storageService.store(addCourseRequest);
     }
 
