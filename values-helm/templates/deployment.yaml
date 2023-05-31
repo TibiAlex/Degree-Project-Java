@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: degree-java
+  name: "{{ .Values.deployname.name }}"
   labels:
     app: degree-java
   namespace: "{{ .Values.namespace.name }}"
