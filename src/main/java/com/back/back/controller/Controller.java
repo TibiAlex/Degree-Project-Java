@@ -67,6 +67,7 @@ public class Controller {
     public String uploadFile(@ModelAttribute AddCourseRequest addCourseRequest) {
         int a;
         int b;
+        int c;
         return storageService.store(addCourseRequest);
     }
 
